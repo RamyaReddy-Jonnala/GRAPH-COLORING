@@ -1,0 +1,46 @@
+//Solution for Problem 5: Graph Coloring (3 Colors)
+
+def graph_coloring(graph):
+    colors = {}
+    available_colors = ['Red', 'Green', 'Blue'] 
+    def is_safe(node, color):
+        for neighbor in graph[node]:
+            if neighbor in colors and colors[neighbor] == color:
+                return False
+        return True
+    def backtrack(node):
+        if node not in colors:
+            for color in available_colors:
+                if is_safe(node, color):
+                    colors[node] = color
+                    success = True
+                    for neighbor in graph[node]:
+                        if neighbor not in colors:
+                            if not backtrack(neighbor):
+                                success = False
+                                break
+                    if success:
+                        return True
+                    colors.pop(node)
+            return False
+        return True
+    
+    for node in graph:
+        if node not in colors:
+            if not backtrack(node):
+                return None
+    return colors
+graph = {
+    'A': ['B', 'C', 'D'],
+    'B': ['A', 'E'],
+    'C': ['A', 'E'],
+    'D': ['A', 'E'],
+    'E': ['B', 'C', 'D']
+}
+coloring = graph_coloring(graph)
+if coloring:
+    print("Graph coloring (no two adjacent nodes have the same color):")
+    for node, color in coloring.items():
+        print(f"{node}: {color}")
+else:
+    print("No valid 3-coloring exists for this graph.")
